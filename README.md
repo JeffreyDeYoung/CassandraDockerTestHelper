@@ -7,7 +7,7 @@ Status: In development.
 ## Building
 mvn clean install
 
-## Pre-Reqs for testing
+## Pre-Reqs for testing and usage
 * A fairly powerful computer; spinning up various versions of Cassandra repeatedly can be expensive.
 * Install Docker
 * Add this line to your /etc/default/docker file:
@@ -21,6 +21,8 @@ cd /src/test/resources/docker
 ```
 
 If something gets weird (memory, lag, etc), try restarting your docker service.
+
+Your JUnit tests should be based on JUnit 4.11 or higher.
 
 ## Usage
 Coming soon.
