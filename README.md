@@ -22,7 +22,7 @@ cd /src/test/resources/docker
 
 If something gets weird (memory, lag, etc), try restarting your docker service.
 
-Your JUnit tests should be based on JUnit 4.11 or higher.
+Your JUnit tests should be based on JUnit 4.11 or higher (needed for full usage of parameterized tests.)
 
 ## Usage
 Coming soon.
