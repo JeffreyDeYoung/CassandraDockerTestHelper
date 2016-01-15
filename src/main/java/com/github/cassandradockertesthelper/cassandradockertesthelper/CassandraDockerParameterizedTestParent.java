@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 /**
@@ -13,6 +14,7 @@ import org.junit.runners.Parameterized;
  *
  * @author jeffrey
  */
+@RunWith(value = Parameterized.class)
 public abstract class CassandraDockerParameterizedTestParent
 {
 
@@ -65,19 +67,22 @@ public abstract class CassandraDockerParameterizedTestParent
         return toReturn;
     }
 
-    public abstract List<String> getCassandraVersions();
-    
     /**
-     * Spins up a new Cassandra docker box with the specified version. Do NOT forget to spin it back down in a finally block or an @AfterTest.
-     * @return The docker id of the box. It is important to save this off so that you can spin the box back down or access information about it.
+     * Spins up a new Cassandra docker box with the specified version. Do NOT
+     * forget to spin it back down in a finally block or an @AfterTest.
+     *
+     * @return The docker id of the box. It is important to save this off so
+     * that you can spin the box back down or access information about it.
      */
-    public String spinUpNewCassandraDockerBox(){
-        String dockerId =  DockerHelper.spinUpDockerBox(dockerFile.getName(), dockerFile);
+    public String spinUpNewCassandraDockerBox()
+    {
+        String dockerId = DockerHelper.spinUpDockerBox(dockerFile.getName(), dockerFile);
         cassandraSeeds.add(DockerHelper.getDockerIp(dockerId));
         return dockerId;
     }
-    
-    public void spinDownCassandraDockerBox(String containerId){
+
+    public void spinDownCassandraDockerBox(String containerId)
+    {
         cassandraSeeds.remove(DockerHelper.getDockerIp(containerId));
         DockerHelper.spinDownDockerBox(containerId);
     }
@@ -125,4 +130,6 @@ public abstract class CassandraDockerParameterizedTestParent
     {
         return cassandraVersion;
     }
+
+    public abstract List<String> getCassandraVersions();
 }

@@ -92,29 +92,29 @@ public class DockerHelperTest
     public void testCycle() throws Exception
     {
         logger.info("Testing docker helper. " + dockerFile.getName());
-        String id = DockerHelper_Old.spinUpDockerBox(dockerFile.getName(), dockerFile);
-        assertTrue(DockerHelper_Old.isBoxRunning(id));
-        assertNotNull(DockerHelper_Old.getDockerIp(id));
-        DockerHelper_Old.spinDownDockerBox(id);
-        assertFalse(DockerHelper_Old.isBoxRunning(id));
+        String id = DockerHelper.spinUpDockerBox(dockerFile.getName(), dockerFile);
+        assertTrue(DockerHelper.isBoxRunning(id));
+        assertNotNull(DockerHelper.getDockerIp(id));
+        DockerHelper.spinDownDockerBox(id);
+        assertFalse(DockerHelper.isBoxRunning(id));
     }
 
     @Test
     public void testCycleTwoBoxes() throws Exception
     {
         logger.info("Testing docker helper with two boxes. " + dockerFile.getName());
-        String id1 = DockerHelper_Old.spinUpDockerBox(dockerFile.getName(), dockerFile);
-        String id2 = DockerHelper_Old.spinUpDockerBox(dockerFile.getName(), dockerFile);
-        assertTrue(DockerHelper_Old.isBoxRunning(id1));
-        assertTrue(DockerHelper_Old.isBoxRunning(id2));
-        assertNotNull(DockerHelper_Old.getDockerIp(id1));
-        assertNotNull(DockerHelper_Old.getDockerIp(id2));
-        assertNotSame(DockerHelper_Old.getDockerIp(id1), DockerHelper_Old.getDockerIp(id2));
-        DockerHelper_Old.spinDownDockerBox(id1);
-        assertFalse(DockerHelper_Old.isBoxRunning(id1));
-        assertTrue(DockerHelper_Old.isBoxRunning(id2));
-        DockerHelper_Old.spinDownDockerBox(id2);
-        assertFalse(DockerHelper_Old.isBoxRunning(id2));
+        String id1 = DockerHelper.spinUpDockerBox(dockerFile.getName(), dockerFile);
+        String id2 = DockerHelper.spinUpDockerBox(dockerFile.getName(), dockerFile);
+        assertTrue(DockerHelper.isBoxRunning(id1));
+        assertTrue(DockerHelper.isBoxRunning(id2));
+        assertNotNull(DockerHelper.getDockerIp(id1));
+        assertNotNull(DockerHelper.getDockerIp(id2));
+        assertNotSame(DockerHelper.getDockerIp(id1), DockerHelper.getDockerIp(id2));
+        DockerHelper.spinDownDockerBox(id1);
+        assertFalse(DockerHelper.isBoxRunning(id1));
+        assertTrue(DockerHelper.isBoxRunning(id2));
+        DockerHelper.spinDownDockerBox(id2);
+        assertFalse(DockerHelper.isBoxRunning(id2));
     }
 
 }
