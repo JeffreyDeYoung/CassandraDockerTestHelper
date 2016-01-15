@@ -19,7 +19,7 @@ public abstract class CassandraDockerParameterizedTestParent
     /**
      * Cassandra seed ips to hit for this test.
      */
-    private String[] cassandraSeeds;
+    private List<String> cassandraSeeds;
     /**
      * Cassandra port to hit for this test.
      */
@@ -39,6 +39,7 @@ public abstract class CassandraDockerParameterizedTestParent
     {
         this.cassandraVersion = dockerFile.getName();
         this.dockerFile = dockerFile;
+        cassandraSeeds = new ArrayList<>();
     }
 
     @Parameterized.Parameters(name = "Docker File: {0}")
@@ -65,6 +66,21 @@ public abstract class CassandraDockerParameterizedTestParent
     }
 
     public abstract List<String> getCassandraVersions();
+    
+    /**
+     * Spins up a new Cassandra docker box with the specified version. Do NOT forget to spin it back down in a finally block or an @AfterTest.
+     * @return The docker id of the box. It is important to save this off so that you can spin the box back down or access information about it.
+     */
+    public String spinUpNewCassandraDockerBox(){
+        String dockerId =  DockerHelper.spinUpDockerBox(dockerFile.getName(), dockerFile);
+        cassandraSeeds.add(DockerHelper.getDockerIp(dockerId));
+        return dockerId;
+    }
+    
+    public void spinDownCassandraDockerBox(String containerId){
+        cassandraSeeds.remove(DockerHelper.getDockerIp(containerId));
+        DockerHelper.spinDownDockerBox(containerId);
+    }
 
     public static File[] getAvailibleDockerFiles()
     {
@@ -85,7 +101,7 @@ public abstract class CassandraDockerParameterizedTestParent
      *
      * @return the cassandraIp
      */
-    public String[] getCassandraIp()
+    public List<String> getCassandraSeeds()
     {
         return cassandraSeeds;
     }
