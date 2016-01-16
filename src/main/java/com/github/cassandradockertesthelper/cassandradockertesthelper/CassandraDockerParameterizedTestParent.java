@@ -47,10 +47,6 @@ public abstract class CassandraDockerParameterizedTestParent
      * Docker IDs that are currently running.
      */
     private List<String> dockerIds;
-    /**
-     * Cassandra port to hit for this test.
-     */
-    private int cassandraPort;
 
     /**
      * Cassandra version that is running on the above seeds/port.
@@ -165,16 +161,6 @@ public abstract class CassandraDockerParameterizedTestParent
     public List<String> getCassandraSeeds()
     {
         return cassandraSeeds;
-    }
-
-    /**
-     * Cassandra port to hit for this test.
-     *
-     * @return the cassandraPort
-     */
-    public int getCassandraPort()
-    {
-        return cassandraPort;
     }
 
     /**
