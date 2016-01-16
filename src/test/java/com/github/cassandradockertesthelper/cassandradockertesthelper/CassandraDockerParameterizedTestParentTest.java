@@ -3,7 +3,6 @@ package com.github.cassandradockertesthelper.cassandradockertesthelper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -46,7 +45,7 @@ public class CassandraDockerParameterizedTestParentTest extends CassandraDockerP
     @Before
     public void setUp()
     {
-        //Generally, you will want to Spin up your cassandra box as part of your setup method. However, for this test, we are not going to.
+        //Generally, you will want to Spin up your cassandra box as part of your setup method. However, for this test particular, we are not going to.
         //String dockerId = super.spinUpNewCassandraDockerBox();
     }
 
