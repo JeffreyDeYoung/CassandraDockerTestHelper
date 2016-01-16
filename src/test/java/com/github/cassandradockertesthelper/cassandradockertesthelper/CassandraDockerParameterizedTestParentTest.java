@@ -53,21 +53,15 @@ public class CassandraDockerParameterizedTestParentTest extends CassandraDockerP
         dockerId = super.spinUpNewCassandraDockerBox();
     }
 
-    @After
-    public void tearDown()
-    {
-        super.spinDownCassandraDockerBox(dockerId);
-    }
-
 
     public static List<String> getCassandraVersions(){
-        List<String> cassandraVersions = new ArrayList<>();
-        cassandraVersions.add("2.0.7");
-        cassandraVersions.add("2.0.8");
-        cassandraVersions.add("2.0.9");
-        cassandraVersions.add("2.0.10");
-        cassandraVersions.add("2.0.11");
-        return cassandraVersions;
+        List<String> versions = new ArrayList<>();
+        versions.add("2.0.7");
+        versions.add("2.0.8");
+        versions.add("2.0.9");
+        versions.add("2.0.10");
+        versions.add("2.0.11");
+        return versions;
     }
 
     @Test

@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.junit.After;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -22,8 +23,8 @@ public abstract class CassandraDockerParameterizedTestParent
      * Cassandra seed ips to hit for this test.
      */
     private List<String> cassandraSeeds;
-    
-        /**
+
+    /**
      * Docker IDs that are currently running.
      */
     private List<String> dockerIds;
@@ -41,17 +42,34 @@ public abstract class CassandraDockerParameterizedTestParent
      * Docker file for this particular test.
      */
     private File dockerFile;
-    
+
     protected static List<String> cassandraVersions;
 
-    public CassandraDockerParameterizedTestParent(File dockerFile)
+    /**
+     * Spin down all our docker boxes that we have spun up during this specific
+     * test. Feel free to override this with your own functionality if you wish
+     * to access this docker files post-test for some reason.
+     */
+    @After
+    public void tearDown()
     {
-        this.cassandraVersion = dockerFile.getName();
-        this.dockerFile = dockerFile;
-        this.cassandraSeeds = new ArrayList<>();
-        this.dockerIds = new ArrayList<>();
+        //copy off the docker ids as they are being removed by the spin down method; we can't iterate through a list that is being modified.
+        List<String> dockerIdCopy = dockerIds;
+        for (int i = 0; i < dockerIdCopy.size(); i++)
+        {
+            String id = dockerIdCopy.get(i);
+            this.spinDownCassandraDockerBox(id);
+        }
     }
 
+    /**
+     * Generates the parameters for each of our parameterized tests. Each item
+     * in the resulting collection represents the parameters for a single test.
+     * The test will be re-run for each item.
+     *
+     * @return A collection of files that will be provided to the constructor of
+     * the child class; one at a time.
+     */
     @Parameterized.Parameters(name = "Docker File: {0}")
     public static final Collection<File[]> generateParameters()
     {
@@ -74,6 +92,14 @@ public abstract class CassandraDockerParameterizedTestParent
             }
         }
         return toReturn;
+    }
+
+    public CassandraDockerParameterizedTestParent(File dockerFile)
+    {
+        this.cassandraVersion = dockerFile.getName();
+        this.dockerFile = dockerFile;
+        this.cassandraSeeds = new ArrayList<>();
+        this.dockerIds = new ArrayList<>();
     }
 
     /**
