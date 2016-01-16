@@ -22,6 +22,11 @@ public abstract class CassandraDockerParameterizedTestParent
      * Cassandra seed ips to hit for this test.
      */
     private List<String> cassandraSeeds;
+    
+        /**
+     * Docker IDs that are currently running.
+     */
+    private List<String> dockerIds;
     /**
      * Cassandra port to hit for this test.
      */
@@ -36,19 +41,22 @@ public abstract class CassandraDockerParameterizedTestParent
      * Docker file for this particular test.
      */
     private File dockerFile;
+    
+    protected static List<String> cassandraVersions;
 
     public CassandraDockerParameterizedTestParent(File dockerFile)
     {
         this.cassandraVersion = dockerFile.getName();
         this.dockerFile = dockerFile;
-        cassandraSeeds = new ArrayList<>();
+        this.cassandraSeeds = new ArrayList<>();
+        this.dockerIds = new ArrayList<>();
     }
 
     @Parameterized.Parameters(name = "Docker File: {0}")
-    public final Collection<File[]> generateParameters()
+    public static final Collection<File[]> generateParameters()
     {
         File[] availibleDockerFiles = CassandraDockerParameterizedTestParent.getAvailibleDockerFiles();
-        List<String> cassandraVersionsToTests = getCassandraVersions();
+        List<String> cassandraVersionsToTests = cassandraVersions;
         boolean testAllVersions = false;
         if (cassandraVersionsToTests == null)
         {
@@ -57,7 +65,8 @@ public abstract class CassandraDockerParameterizedTestParent
         List<File[]> toReturn = new ArrayList<>();
         for (File f : availibleDockerFiles)
         {
-            if (testAllVersions || cassandraVersionsToTests.contains(f.getName().substring(0, 8)))
+            String dockerCassandraVersion = f.getName().substring(9);
+            if (testAllVersions || cassandraVersionsToTests.contains(dockerCassandraVersion))
             {
                 File[] fileArray = new File[1];
                 fileArray[0] = f;
@@ -77,6 +86,7 @@ public abstract class CassandraDockerParameterizedTestParent
     public String spinUpNewCassandraDockerBox()
     {
         String dockerId = DockerHelper.spinUpDockerBox(dockerFile.getName(), dockerFile);
+        dockerIds.add(dockerId);
         cassandraSeeds.add(DockerHelper.getDockerIp(dockerId));
         return dockerId;
     }
@@ -84,6 +94,7 @@ public abstract class CassandraDockerParameterizedTestParent
     public void spinDownCassandraDockerBox(String containerId)
     {
         cassandraSeeds.remove(DockerHelper.getDockerIp(containerId));
+        dockerIds.remove(containerId);
         DockerHelper.spinDownDockerBox(containerId);
     }
 
@@ -130,6 +141,4 @@ public abstract class CassandraDockerParameterizedTestParent
     {
         return cassandraVersion;
     }
-
-    public abstract List<String> getCassandraVersions();
 }
