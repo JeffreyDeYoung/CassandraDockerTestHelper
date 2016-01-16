@@ -19,10 +19,15 @@ DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock"
 cd /src/test/resources/docker
 ./buildCassandraDockerInstances.sh
 ```
+* You will have to copy the contents of /src/test/resources/docker to the same path inside of your applications test resources.
 
-If something gets weird (memory, lag, etc), try restarting your docker service.
+If something gets weird (memory, lag, etc), try restarting your docker service. This seems to be better lately.
 
 Your JUnit tests should be based on JUnit 4.11 or higher (needed for full usage of parameterized tests.)
 
 ## Usage
-Coming soon.
+Not yet hosted on maven central, so you will have to build locally first.
+
+After that, you will have to copy the contents of /src/test/resources/docker to the same path inside of your applications test resources.
+
+Read through [CassandraDockerParameterizedTestParentTest.java](https://github.com/JeffreyDeYoung/CassandraDockerTestHelper/blob/master/src/test/java/com/github/cassandradockertesthelper/cassandradockertesthelper/CassandraDockerParameterizedTestParentTest.java) for a test example.

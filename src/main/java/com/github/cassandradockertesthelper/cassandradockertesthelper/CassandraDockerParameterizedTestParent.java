@@ -25,16 +25,28 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Parent class for all tests you wish to use Cassandra Docker instances for
- * testing.
+ * testing. Use the setCassandraVersions(List<String> versions) method to set
+ * versions of Cassandra to test against.
  *
  * @author jeffrey
  */
 @RunWith(value = Parameterized.class)
 public abstract class CassandraDockerParameterizedTestParent
 {
+
+    /**
+     * Logger for this class.
+     */
+    private static final Logger logger = LoggerFactory.getLogger(CassandraDockerParameterizedTestParent.class);
+
+    /**
+     * Rule for getting the test name.
+     */
     @Rule
     public final TestName name = new TestName();
 
@@ -49,7 +61,7 @@ public abstract class CassandraDockerParameterizedTestParent
     private List<String> dockerIds;
 
     /**
-     * Cassandra version that is running on the above seeds/port.
+     * Cassandra version that is running on the above seeds.
      */
     private String cassandraVersion;
 
@@ -58,7 +70,14 @@ public abstract class CassandraDockerParameterizedTestParent
      */
     private File dockerFile;
 
-    protected static List<String> cassandraVersions;
+    /**
+     * Cassandra versions to test against. This <b>must</b> be set in a
+     *
+     * @BeforeClass by the child class, if you want to specify specific versions
+     * of Cassandra to test against. If not all available versions of Cassandra
+     * will be used.
+     */
+    private static List<String> cassandraVersions;
 
     /**
      * Spin down all our docker boxes that we have spun up during this specific
@@ -68,11 +87,16 @@ public abstract class CassandraDockerParameterizedTestParent
     @After
     public void tearDown()
     {
-        //copy off the docker ids as they are being removed by the spin down method; we can't iterate through a list that is being modified.
-        List<String> dockerIdCopy = dockerIds;
-        for (int i = 0; i < dockerIdCopy.size(); i++)
+        logger.debug("Spinning down all docker instances post-test.");
+        //copy off the docker ids as they are being removed by the spin down method; 
+        //we can't iterate through a list that is being modified.        
+        String[] dockerIdCopy = new String[dockerIds.size()];
+        for(int i = 0; i < dockerIds.size(); i++){
+            dockerIdCopy[i] = dockerIds.get(i);                    
+        }
+        for (int i = 0; i < dockerIdCopy.length; i++)
         {
-            String id = dockerIdCopy.get(i);
+            String id = dockerIdCopy[i];
             this.spinDownCassandraDockerBox(id);
         }
     }
@@ -89,7 +113,7 @@ public abstract class CassandraDockerParameterizedTestParent
     public static final Collection<File[]> generateParameters()
     {
         File[] availibleDockerFiles = CassandraDockerParameterizedTestParent.getAvailibleDockerFiles();
-        List<String> cassandraVersionsToTests = cassandraVersions;
+        List<String> cassandraVersionsToTests = getCassandraVersions();
         boolean testAllVersions = false;
         if (cassandraVersionsToTests == null)
         {
@@ -109,20 +133,25 @@ public abstract class CassandraDockerParameterizedTestParent
         return toReturn;
     }
 
+    /**
+     * Constructor. This is a parameterized test, so this is where the docker
+     * file information gets injected.
+     *
+     * @param dockerFile Docker file that represents a Cassandra box that we
+     * will use to replicate Cassandra for this test.
+     */
     public CassandraDockerParameterizedTestParent(File dockerFile)
     {
-        this.cassandraVersion = dockerFile.getName();
+        this.cassandraVersion = dockerFile.getName().substring(9);
         this.dockerFile = dockerFile;
         this.cassandraSeeds = new ArrayList<>();
         this.dockerIds = new ArrayList<>();
     }
 
     /**
-     * Spins up a new Cassandra docker box with the specified version. Do NOT
-     * forget to spin it back down in a finally block or an @AfterTest.
+     * Spins up a new Cassandra docker box with the specified version.
      *
-     * @return The docker id of the box. It is important to save this off so
-     * that you can spin the box back down or access information about it.
+     * @return The docker id of the box.
      */
     public String spinUpNewCassandraDockerBox()
     {
@@ -132,6 +161,12 @@ public abstract class CassandraDockerParameterizedTestParent
         return dockerId;
     }
 
+    /**
+     * Spins down a Cassandra box. Will be called automatically for all test
+     * established docker instances at the end of each test.
+     *
+     * @param containerId
+     */
     public void spinDownCassandraDockerBox(String containerId)
     {
         cassandraSeeds.remove(DockerHelper.getDockerIp(containerId));
@@ -139,6 +174,10 @@ public abstract class CassandraDockerParameterizedTestParent
         DockerHelper.spinDownDockerBox(containerId);
     }
 
+    /**
+     * Gets all the available docker files. Looks in ./src/test/resources/docker/.
+     * @return An array of all the available docker files.
+     */
     public static File[] getAvailibleDockerFiles()
     {
         File dir = new File("./src/test/resources/docker/");
@@ -164,7 +203,7 @@ public abstract class CassandraDockerParameterizedTestParent
     }
 
     /**
-     * Cassandra version that is running on the above seeds/port.
+     * Cassandra version that is running on the above seeds.
      *
      * @return the cassandraVersion
      */
@@ -172,8 +211,41 @@ public abstract class CassandraDockerParameterizedTestParent
     {
         return cassandraVersion;
     }
-    
-    public String getTestName(){
+
+    /**
+     * Gets the name of the specific test that is running. Includes the
+     * parameter.
+     *
+     * @return The name and parameter of the specific test that is running.
+     */
+    public String getTestName()
+    {
         return name.getMethodName();
+    }
+
+    /**
+     * Cassandra versions to test against. This <b>must</b> be set in a
+     *
+     * @BeforeClass by the child class, if you want to specify specific versions
+     * of Cassandra to test against. If not all available versions of Cassandra
+     * will be used.
+     * @return the cassandraVersions
+     */
+    public static List<String> getCassandraVersions()
+    {
+        return cassandraVersions;
+    }
+
+    /**
+     * Cassandra versions to test against. This <b>must</b> be set in a
+     *
+     * @BeforeClass by the child class, if you want to specify specific versions
+     * of Cassandra to test against. If not all available versions of Cassandra
+     * will be used.
+     * @param aCassandraVersions the cassandraVersions to set
+     */
+    public static void setCassandraVersions(List<String> aCassandraVersions)
+    {
+        cassandraVersions = aCassandraVersions;
     }
 }

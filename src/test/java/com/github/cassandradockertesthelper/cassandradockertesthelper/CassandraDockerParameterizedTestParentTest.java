@@ -68,7 +68,7 @@ public class CassandraDockerParameterizedTestParentTest extends CassandraDockerP
          cassandra versions. If you do not set this, the test will run against all
          cassandra versions availible. 
          */
-        cassandraVersions = getCassandraVersions();//this breaks so many programming conventions that it makes my head hurt. However, with the limitations of the parameteized builds; it's easiest this way.
+        setCassandraVersions(getCassandraVersions());
     }
 
     @Before
@@ -111,6 +111,7 @@ public class CassandraDockerParameterizedTestParentTest extends CassandraDockerP
         //note, we are NOT spining down the box we created. We are relying on the parent class to do that automatically at the end of this test
         String firstIp = DockerHelper.getDockerIp(firstDockerId);//we can get the ip from the docker helper based on the instance id
         assertNotNull(firstIp);
+        logger.info("Ip of new Cassandra box: " + firstIp);
         //or we can get the ip as a list of seeds
         List<String> seeds = super.getCassandraSeeds();
         assertEquals(1, seeds.size());//we should have one see at this point
@@ -123,7 +124,9 @@ public class CassandraDockerParameterizedTestParentTest extends CassandraDockerP
         logger.info("Created second new Cassandra Docker box: " + secondDockerId);
         seeds = super.getCassandraSeeds();
         assertEquals(2, seeds.size());//we should have one see at this point
-        assertEquals(DockerHelper.getDockerIp(secondDockerId), seeds.get(1));
+        String secondIp = DockerHelper.getDockerIp(secondDockerId);
+        logger.info("Ip of new Cassandra box: " + secondIp);
+        assertEquals(secondIp, seeds.get(1));
         
         //the afterTest in the parent class should clean up all the instances created during each test run.
     }
