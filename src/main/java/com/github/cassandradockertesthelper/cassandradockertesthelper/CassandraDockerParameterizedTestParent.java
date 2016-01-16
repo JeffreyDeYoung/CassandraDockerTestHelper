@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.junit.After;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -18,6 +20,8 @@ import org.junit.runners.Parameterized;
 @RunWith(value = Parameterized.class)
 public abstract class CassandraDockerParameterizedTestParent
 {
+    @Rule
+    public final TestName name = new TestName();
 
     /**
      * Cassandra seed ips to hit for this test.
@@ -166,5 +170,9 @@ public abstract class CassandraDockerParameterizedTestParent
     public String getCassandraVersion()
     {
         return cassandraVersion;
+    }
+    
+    public String getTestName(){
+        return name.getMethodName();
     }
 }

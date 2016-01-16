@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.github.cassandradockertesthelper.cassandradockertesthelper;
 
 import java.io.File;
@@ -18,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Test class for CassandraDockerParameterizedTestParent. Also is an example on
+ * how to properly use CassandraDockerParameterizedTestParent and demonstrates
+ * the features of this test library.
  *
  * @author jeffrey
  */
@@ -28,8 +26,6 @@ public class CassandraDockerParameterizedTestParentTest extends CassandraDockerP
      * Logger for this class.
      */
     private static final Logger logger = LoggerFactory.getLogger(CassandraDockerParameterizedTestParentTest.class);
-
-    private String dockerId;
 
     public CassandraDockerParameterizedTestParentTest(File dockerFile)
     {
@@ -50,11 +46,12 @@ public class CassandraDockerParameterizedTestParentTest extends CassandraDockerP
     @Before
     public void setUp()
     {
-        dockerId = super.spinUpNewCassandraDockerBox();
+        //Generally, you will want to Spin up your cassandra box as part of your setup method. However, for this test, we are not going to.
+        //String dockerId = super.spinUpNewCassandraDockerBox();
     }
 
-
-    public static List<String> getCassandraVersions(){
+    public static List<String> getCassandraVersions()
+    {
         List<String> versions = new ArrayList<>();
         versions.add("2.0.7");
         versions.add("2.0.8");
@@ -67,7 +64,8 @@ public class CassandraDockerParameterizedTestParentTest extends CassandraDockerP
     @Test
     public void testCassandraParamaterizedTests()
     {
-        logger.info("Testing with cassandra.");
+        logger.info("Testing with cassandra. Test name (with paramter name)" + super.getTestName());
+        logger.info("Testing cassandra version: " + super.getCassandraVersion());
         assertTrue(true);
     }
 
