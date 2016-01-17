@@ -15,8 +15,6 @@
  */
 package com.github.cassandradockertesthelper;
 
-import com.github.cassandradockertesthelper.CassandraDockerParameterizedTestParent;
-import com.github.cassandradockertesthelper.DockerHelper;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
