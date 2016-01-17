@@ -18,6 +18,7 @@ package com.github.cassandradockertesthelper.cassandradockertesthelper;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.junit.After;
@@ -71,11 +72,12 @@ public abstract class CassandraDockerParameterizedTestParent
     private File dockerFile;
 
     /**
-     * Cassandra versions to test against. This <b>must</b> be set in a
-     *
-     * @BeforeClass by the child class, if you want to specify specific versions
-     * of Cassandra to test against. If not all available versions of Cassandra
-     * will be used.
+     * Cassandra versions to test against. This can either be set by the
+     * setCassandraVersions method in an atBeforeClass method, OR by setting the
+     * system property at runtime:
+     * 'com.github.cassandradockertesthelper.cassandraversions' (comma
+     * separated; no spaces). The system property will always take priority. If
+     * neither is set, all available versions of Cassandra will be used.
      */
     private static List<String> cassandraVersions;
 
@@ -91,8 +93,9 @@ public abstract class CassandraDockerParameterizedTestParent
         //copy off the docker ids as they are being removed by the spin down method; 
         //we can't iterate through a list that is being modified.        
         String[] dockerIdCopy = new String[dockerIds.size()];
-        for(int i = 0; i < dockerIds.size(); i++){
-            dockerIdCopy[i] = dockerIds.get(i);                    
+        for (int i = 0; i < dockerIds.size(); i++)
+        {
+            dockerIdCopy[i] = dockerIds.get(i);
         }
         for (int i = 0; i < dockerIdCopy.length; i++)
         {
@@ -175,7 +178,9 @@ public abstract class CassandraDockerParameterizedTestParent
     }
 
     /**
-     * Gets all the available docker files. Looks in ./src/test/resources/docker/.
+     * Gets all the available docker files. Looks in
+     * ./src/test/resources/docker/.
+     *
      * @return An array of all the available docker files.
      */
     public static File[] getAvailibleDockerFiles()
@@ -224,24 +229,30 @@ public abstract class CassandraDockerParameterizedTestParent
     }
 
     /**
-     * Cassandra versions to test against. This <b>must</b> be set in a
+     * Cassandra versions to test against. See comment on the field above.
      *
-     * @BeforeClass by the child class, if you want to specify specific versions
-     * of Cassandra to test against. If not all available versions of Cassandra
-     * will be used.
      * @return the cassandraVersions
      */
     public static List<String> getCassandraVersions()
     {
-        return cassandraVersions;
+        String systemSetCassandraVersions = System.getProperty("com.github.cassandradockertesthelper.cassandraversions");
+        if (systemSetCassandraVersions != null)
+        {
+            return Arrays.asList(systemSetCassandraVersions.split(","));
+        } else
+        {
+            return cassandraVersions;
+        }
     }
 
     /**
-     * Cassandra versions to test against. This <b>must</b> be set in a
+     * Cassandra versions to test against. This method must be called by an
+     * atBeforeClass in the child class, if you want to specify specific
+     * versions of Cassandra to test against and are not using the system
+     * property method.
      *
-     * @BeforeClass by the child class, if you want to specify specific versions
-     * of Cassandra to test against. If not all available versions of Cassandra
-     * will be used.
+     * See comments on the field above.
+     *
      * @param aCassandraVersions the cassandraVersions to set
      */
     public static void setCassandraVersions(List<String> aCassandraVersions)
