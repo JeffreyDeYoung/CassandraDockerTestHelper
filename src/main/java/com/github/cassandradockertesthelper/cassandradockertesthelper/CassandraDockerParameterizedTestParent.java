@@ -30,9 +30,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Parent class for all tests you wish to use Cassandra Docker instances for
- * testing. Use the setCassandraVersions(List<String> versions) method to set
- * versions of Cassandra to test against.
+ * Parent class for all tests that you wish to use Cassandra Docker instances
+ * for testing. There are three ways to specify the versions of Cassandra to
+ * test against: 1. Use the setCassandraVersions(List<String> versions) method
+ * to set versions of Cassandra. This must be called from a method annotated
+ * with atBeforeClass in the child class. 2. Set the
+ * 'com.github.cassandradockertesthelper.cassandraversions' system property with
+ * a comma (no spaces) separated list of Cassandra versions at runtime. Ex:
+ * "-Dcom.github.cassandracurator.cassandraversions=2.1.0,2.1.9" 3. Do Nothing.
+ * All available versions of Cassandra will be tested against.
  *
  * @author jeffrey
  */
