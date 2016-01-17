@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test class for CassandraDockerParameterizedTestParent. Also is an example on
+ * Test class for AbstractCassandraDockerParameterizedTest. Also is an example on
  * how to properly use CassandraDockerParameterizedTestParent and demonstrates
  * the features of this test library. Look for comments that are marked with
  * "*you must do this*" for hints on how to use
@@ -34,13 +34,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author jeffrey
  */
-public class CassandraDockerParameterizedTestParentTest extends CassandraDockerParameterizedTestParent//note that we are extending the parent here: *you must do this*
+public class AbstractCassandraDockerParameterizedTestTest extends AbstractCassandraDockerParameterizedTest//note that we are extending the parent here: *you must do this*
+//note that we are extending the parent here: *you must do this*
 {
 
     /**
      * Logger for this class.
      */
-    private static final Logger logger = LoggerFactory.getLogger(CassandraDockerParameterizedTestParentTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractCassandraDockerParameterizedTestTest.class);
 
     /**
      * Constructor. Must follow this format. The file parameter is provided by
@@ -50,7 +51,7 @@ public class CassandraDockerParameterizedTestParentTest extends CassandraDockerP
      * @param dockerFile Parameter for this test. It's the docker file that
      * represents the version of Cassandra we are testing.
      */
-    public CassandraDockerParameterizedTestParentTest(File dockerFile)
+    public AbstractCassandraDockerParameterizedTestTest(File dockerFile)
     {
         super(dockerFile);//call to super class to actually setup this test. *you must do this*
     }
@@ -139,7 +140,7 @@ public class CassandraDockerParameterizedTestParentTest extends CassandraDockerP
     public void testGetAvailibleDockerFiles()
     {
         System.out.println("getAvailibleDockerFiles");
-        File[] result = CassandraDockerParameterizedTestParent.getAvailibleDockerFiles();
+        File[] result = AbstractCassandraDockerParameterizedTest.getAvailibleDockerFiles();
         assertTrue(result.length > 1);//make sure we have at least one availible docker file (to make sure we are reading them properly from the fs)
     }
 

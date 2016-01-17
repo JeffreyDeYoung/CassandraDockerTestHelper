@@ -43,13 +43,13 @@ import org.slf4j.LoggerFactory;
  * @author jeffrey
  */
 @RunWith(value = Parameterized.class)
-public abstract class CassandraDockerParameterizedTestParent
+public abstract class AbstractCassandraDockerParameterizedTest
 {
 
     /**
      * Logger for this class.
      */
-    private static final Logger logger = LoggerFactory.getLogger(CassandraDockerParameterizedTestParent.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractCassandraDockerParameterizedTest.class);
 
     /**
      * Rule for getting the test name.
@@ -121,7 +121,7 @@ public abstract class CassandraDockerParameterizedTestParent
     @Parameterized.Parameters(name = "Docker File: {0}")
     public static final Collection<File[]> generateParameters()
     {
-        File[] availibleDockerFiles = CassandraDockerParameterizedTestParent.getAvailibleDockerFiles();
+        File[] availibleDockerFiles = AbstractCassandraDockerParameterizedTest.getAvailibleDockerFiles();
         List<String> cassandraVersionsToTests = getCassandraVersions();
         boolean testAllVersions = false;
         if (cassandraVersionsToTests == null)
@@ -149,7 +149,7 @@ public abstract class CassandraDockerParameterizedTestParent
      * @param dockerFile Docker file that represents a Cassandra box that we
      * will use to replicate Cassandra for this test.
      */
-    public CassandraDockerParameterizedTestParent(File dockerFile)
+    public AbstractCassandraDockerParameterizedTest(File dockerFile)
     {
         this.cassandraVersion = dockerFile.getName().substring(9);
         this.dockerFile = dockerFile;
