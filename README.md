@@ -30,4 +30,4 @@ Not yet hosted on maven central, so you will have to build locally first.
 
 After that, you will have to copy the contents of /src/test/resources/docker to the same path inside of your applications test resources.
 
-Read through [AbstractCassandraDockerParameterizedTestTest.java](https://github.com/JeffreyDeYoung/CassandraDockerTestHelper/blob/master/src/test/java/com/github/cassandradockertesthelper/cassandradockertesthelper/AbstractCassandraDockerParameterizedTestTest.java) for a test example.
+Read through [AbstractCassandraDockerParameterizedTestTest.java](https://github.com/JeffreyDeYoung/CassandraDockerTestHelper/blob/master/src/test/java/com/github/cassandradockertesthelper/AbstractCassandraDockerParameterizedTestTest.java) for a test example.
