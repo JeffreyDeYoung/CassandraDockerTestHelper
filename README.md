@@ -9,7 +9,7 @@ mvn clean install
 
 ## Pre-Reqs for testing and usage
 * A fairly powerful computer; spinning up various versions of Cassandra repeatedly can be expensive.
-* Install Docker
+* Install Docker (https://docs.docker.com/engine/installation/)
 * Add this line to your /etc/default/docker file:
 DOCKER_OPTS="-H tcp://127.0.0.1:2375 -H unix:///var/run/docker.sock"
 * Restart Docker
