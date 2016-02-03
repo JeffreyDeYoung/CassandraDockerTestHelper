@@ -251,9 +251,7 @@ public abstract class AbstractCassandraDockerParameterizedTest
      * @return the cassandraVersions
      */
     public static List<String> getCassandraVersions()
-    {
-
-        
+    {        
         String systemSetCassandraVersions = System.getProperty("com.github.cassandradockertesthelper.cassandraversions");
         if (systemSetCassandraVersions != null)
         {
