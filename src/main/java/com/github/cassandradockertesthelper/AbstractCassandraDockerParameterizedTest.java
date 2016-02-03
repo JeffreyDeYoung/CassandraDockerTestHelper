@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * renaming, the files shouldn't start with the string "cassandra" 2. Set the
  * 'com.github.cassandradockertesthelper.cassandraversions' system property with
  * a comma (no spaces) separated list of Cassandra versions at test startup. Ex:
- * "-Dcom.github.cassandracurator.cassandraversions=2.1.0,2.1.9" 3. Do Nothing.
+ * "-Dcom.github.cassandradockertesthelper.cassandraversions=2.1.0,2.1.9" 3. Do Nothing.
  * All available versions of Cassandra will be tested against.
  *
  * @author jeffrey
