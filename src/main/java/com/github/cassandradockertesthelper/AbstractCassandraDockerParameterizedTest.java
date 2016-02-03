@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.junit.After;
@@ -252,17 +253,17 @@ public abstract class AbstractCassandraDockerParameterizedTest
     public static List<String> getCassandraVersions()
     {
 
-//        
-//        String systemSetCassandraVersions = System.getProperty("com.github.cassandradockertesthelper.cassandraversions");
-//        if (systemSetCassandraVersions != null)
-//        {
-//            return Arrays.asList(systemSetCassandraVersions.split(","));
-//        } else
-//        {
-//            return cassandraVersions;
-//        }
-        List<String> versions = new ArrayList<String>();
-        versions.add("2.0.6");
-        return versions;
+        
+        String systemSetCassandraVersions = System.getProperty("com.github.cassandradockertesthelper.cassandraversions");
+        if (systemSetCassandraVersions != null)
+        {
+            return Arrays.asList(systemSetCassandraVersions.split(","));
+        } else
+        {
+            return null;
+        }
+//        List<String> versions = new ArrayList<String>();
+//        versions.add("2.0.6");
+        //return versions;
     }
 }
