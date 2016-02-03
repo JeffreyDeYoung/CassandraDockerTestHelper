@@ -16,7 +16,6 @@
 package com.github.cassandradockertesthelper;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -26,15 +25,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Test class for AbstractCassandraDockerParameterizedTest. Also is an example on
- * how to properly use CassandraDockerParameterizedTestParent and demonstrates
- * the features of this test library. Look for comments that are marked with
- * "*you must do this*" for hints on how to use
+ * Test class for AbstractCassandraDockerParameterizedTest. Also is an example
+ * on how to properly use CassandraDockerParameterizedTestParent and
+ * demonstrates the features of this test library. Look for comments that are
+ * marked with "*you must do this*" for hints on how to use
  * CassandraDockerParameterizedTestParent correctly.
  *
  * @author jeffrey
  */
-public class AbstractCassandraDockerParameterizedTestTest extends AbstractCassandraDockerParameterizedTest//note that we are extending the parent here: *you must do this*
+public class AbstractCassandraDockerParameterizedTestTest extends AbstractCassandraDockerParameterizedTest
 //note that we are extending the parent here: *you must do this*
 {
 
@@ -63,13 +62,6 @@ public class AbstractCassandraDockerParameterizedTestTest extends AbstractCassan
     @BeforeClass
     public static void setUpClass()
     {
-        /* if you want to set specific versions of cassandra you want your tests 
-         to run against, you must set the static variable "cassandraVersions" in 
-         a @BeforeClass method. *you must do this* if you want to set the 
-         cassandra versions. If you do not set this, the test will run against all
-         cassandra versions availible. 
-         */
-        setCassandraVersions(getCassandraVersions());
     }
 
     @Before
@@ -80,24 +72,8 @@ public class AbstractCassandraDockerParameterizedTestTest extends AbstractCassan
     }
 
     /**
-     * Gets a simple String List of all the Cassandra versions we want to test
-     * against. See setUpClass() and related comments.
-     *
-     * @return A list of Cassandra versions to test against.
-     */
-    public static List<String> getCassandraVersions()
-    {
-        List<String> versions = new ArrayList<>();
-        versions.add("2.0.7");
-        versions.add("2.0.8");
-        versions.add("2.0.9");
-        versions.add("2.0.10");
-        versions.add("2.0.11");
-        return versions;
-    }
-
-    /**
-     * Example test with lots of method calls. Read though this method if you want to know how to use the parent class.
+     * Example test with lots of method calls. Read though this method if you
+     * want to know how to use the parent class.
      */
     @Test
     public void testCassandraParamaterizedTests()
@@ -117,7 +93,7 @@ public class AbstractCassandraDockerParameterizedTestTest extends AbstractCassan
         List<String> seeds = super.getCassandraSeeds();
         assertEquals(1, seeds.size());//we should have one see at this point
         assertEquals(firstIp, seeds.get(0));
-        
+
         //lets add a second cassandra box (note, this does not actually join them in a cluster;
         //that's up to you. See CassandraCurator for automation if you want it .)
         String secondDockerId = super.spinUpNewCassandraDockerBox();
@@ -128,13 +104,13 @@ public class AbstractCassandraDockerParameterizedTestTest extends AbstractCassan
         String secondIp = DockerHelper.getDockerIp(secondDockerId);
         logger.info("Ip of new Cassandra box: " + secondIp);
         assertEquals(secondIp, seeds.get(1));
-        
+
         //the afterTest in the parent class should clean up all the instances created during each test run.
     }
 
-
     /**
-     * Test of getAvailibleDockerFiles method, of class CassandraDockerParameterizedTestParent.
+     * Test of getAvailibleDockerFiles method, of class
+     * CassandraDockerParameterizedTestParent.
      */
     @Test
     public void testGetAvailibleDockerFiles()

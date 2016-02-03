@@ -15,10 +15,13 @@
  */
 package com.github.cassandradockertesthelper;
 
+import com.github.cassandrasshutils.command.RemoteCommandDao;
+import com.github.cassandrasshutils.command.impl.SSHCommandDaoImpl;
+import com.github.cassandrasshutils.exceptions.ConnectionException;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.junit.After;
@@ -32,11 +35,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Parent class for all tests that you wish to use Cassandra Docker instances
  * for testing. There are three ways to specify the versions of Cassandra to
- * test against: 1. Use the setCassandraVersions(List<String> versions) method
- * to set versions of Cassandra. This must be called from a method annotated
- * with atBeforeClass in the child class. 2. Set the
+ * test against: 1. Temporarily rename or remove the versions of Cassandra you
+ * do not wish to test against from the src/test/resources/docker/ directory. If
+ * renaming, the files shouldn't start with the string "cassandra" 2. Set the
  * 'com.github.cassandradockertesthelper.cassandraversions' system property with
- * a comma (no spaces) separated list of Cassandra versions at runtime. Ex:
+ * a comma (no spaces) separated list of Cassandra versions at test startup. Ex:
  * "-Dcom.github.cassandracurator.cassandraversions=2.1.0,2.1.9" 3. Do Nothing.
  * All available versions of Cassandra will be tested against.
  *
@@ -76,16 +79,6 @@ public abstract class AbstractCassandraDockerParameterizedTest
      * Docker file for this particular test.
      */
     private File dockerFile;
-
-    /**
-     * Cassandra versions to test against. This can either be set by the
-     * setCassandraVersions method in an atBeforeClass method, OR by setting the
-     * system property at runtime:
-     * 'com.github.cassandradockertesthelper.cassandraversions' (comma
-     * separated; no spaces). The system property will always take priority. If
-     * neither is set, all available versions of Cassandra will be used.
-     */
-    private static List<String> cassandraVersions;
 
     /**
      * Spin down all our docker boxes that we have spun up during this specific
@@ -164,9 +157,25 @@ public abstract class AbstractCassandraDockerParameterizedTest
      */
     public String spinUpNewCassandraDockerBox()
     {
+        logger.info("Spinning up Cassandra Docker Box:--------------------------------\r\n\tCassandra version:" + this.cassandraVersion + " for test: " + this.getTestName());
         String dockerId = DockerHelper.spinUpDockerBox(dockerFile.getName(), dockerFile);
         dockerIds.add(dockerId);
-        cassandraSeeds.add(DockerHelper.getDockerIp(dockerId));
+        String ip = DockerHelper.getDockerIp(dockerId);
+        cassandraSeeds.add(ip);
+        RemoteCommandDao command = new SSHCommandDaoImpl(ip, "root", 22, "./src/test/resources/docker/insecure_key", null);
+        try
+        {
+            command.connect();
+            command.sendCommand("/etc/cassandra/setcassandraip.sh");//set the ips in the cassandra yaml correctly; I can't get the dockerfile to do this automatically -- this will probably bite us in the future
+        } catch (ConnectionException | IOException e)
+        {
+            //throw a runtime exception; generally this is bad practice, but it will only ever be used by a test in this case;
+            //we will want to fail the test case if this ever happens anyway
+            throw new RuntimeException(e);
+        } finally
+        {
+            command.logOff();
+        }
         return dockerId;
     }
 
@@ -178,6 +187,7 @@ public abstract class AbstractCassandraDockerParameterizedTest
      */
     public void spinDownCassandraDockerBox(String containerId)
     {
+        logger.info("Spinning down Cassandra Docker Box: Cassandra version:" + this.cassandraVersion + " for test: " + this.getTestName());
         cassandraSeeds.remove(DockerHelper.getDockerIp(containerId));
         dockerIds.remove(containerId);
         DockerHelper.spinDownDockerBox(containerId);
@@ -241,28 +251,18 @@ public abstract class AbstractCassandraDockerParameterizedTest
      */
     public static List<String> getCassandraVersions()
     {
-        String systemSetCassandraVersions = System.getProperty("com.github.cassandradockertesthelper.cassandraversions");
-        if (systemSetCassandraVersions != null)
-        {
-            return Arrays.asList(systemSetCassandraVersions.split(","));
-        } else
-        {
-            return cassandraVersions;
-        }
-    }
 
-    /**
-     * Cassandra versions to test against. This method must be called by an
-     * atBeforeClass in the child class, if you want to specify specific
-     * versions of Cassandra to test against and are not using the system
-     * property method.
-     *
-     * See comments on the field above.
-     *
-     * @param aCassandraVersions the cassandraVersions to set
-     */
-    public static void setCassandraVersions(List<String> aCassandraVersions)
-    {
-        cassandraVersions = aCassandraVersions;
+//        
+//        String systemSetCassandraVersions = System.getProperty("com.github.cassandradockertesthelper.cassandraversions");
+//        if (systemSetCassandraVersions != null)
+//        {
+//            return Arrays.asList(systemSetCassandraVersions.split(","));
+//        } else
+//        {
+//            return cassandraVersions;
+//        }
+        List<String> versions = new ArrayList<String>();
+        versions.add("2.0.6");
+        return versions;
     }
 }
